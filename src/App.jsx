@@ -1,34 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+import { Button, DatePicker, Input } from 'antd';
 import './App.css'
+import { useState } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [data, setData] = useState('')
+  const [firstName, setFirstName] = useState('')
+
+  const sendData = async () => {
+    const response = await fetch('https://5c16d7330a26280c.mokky.dev/data', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: data,
+        firstName,
+      })
+    })
+    return response
+  }
+
+  console.log(data)
+
+  const onChange = (_, dateString) => {
+    setData(dateString);
+  };
+  const firstNameChange = (e) => {
+    setFirstName(e.target.value);
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    sendData()
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <form onSubmit={onSubmit}>
+       <DatePicker onChange={onChange} />
+       <Input value={firstName} onChange={firstNameChange} placeholder='first name'/>
+       <Button htmlType='submit'>Send Date</Button>
+    </form>
   )
 }
 
